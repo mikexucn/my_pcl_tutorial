@@ -1,0 +1,29 @@
+<launch>
+	
+		<!-- start the robot -->
+  <include file="$(find ur_modern_driver)/launch/ur5_bringup.launch">
+      <arg name="limited" value="true" />
+      <arg name="robot_ip" value="192.168.0.111" />
+  </include>
+  <include file="$(find ur5_moveit_config)/launch/ur5_moveit_planning_execution.launch">
+      <arg name="limited" value="true" />
+  </include>
+
+  <include file="$(find ur5_moveit_config)/launch/moveit_rviz.launch">
+      <arg name="config" value="true" />
+  </include>
+
+
+	<include file="$(find kinect2_bridge)/launch/kinect2_1.launch" />
+
+	<node pkg="my_pcl_tutorial" type="s1_passthrough" name="s1_pass_through" respawn="false">
+        <remap from="/cloud_input" to="/kinect2_1/qhd/points" />
+  </node>
+	<node pkg="my_pcl_tutorial" type="s2_voxelgrid" name="s2_voxel_grid" respawn="false" />
+	<node pkg="my_pcl_tutorial" type="s3_radiussearch" name="s3_radius_search" respawn="false" />
+
+	<!--<include file="$(find easy_handeye)/launch/publish.launch" />-->
+
+	<node pkg="tf" type="static_transform_publisher" name="ur5_broadcaster" args="-0.295338970327 0.634044068359 0.792689896875 -0.0222457500418 -0.851559876472 0.523260157413 0.0234459176046 base_link kinect2_1_rgb_optical_frame 100" />
+
+</launch>
